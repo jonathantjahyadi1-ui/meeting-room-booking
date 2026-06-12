@@ -1,0 +1,88 @@
+{% extends "base.html" %}
+{% block title %}Dashboard HRD - Meeting Room Booking{% endblock %}
+
+{% block page_title %}
+<div class="page-header">
+    <h4><i class="bi bi-speedometer2"></i> Dashboard HRD</h4>
+    <span class="text-muted">Selamat datang, {{ current_user.nama }}!</span>
+</div>
+{% endblock %}
+
+{% block content %}
+<div class="row g-3 mb-4">
+    <div class="col-sm-6 col-lg-3">
+        <div class="stat-card">
+            <div class="stat-icon bg-primary-subtle text-primary"><i class="bi bi-calendar-check"></i></div>
+            <div class="stat-info"><span class="stat-value">{{ total_bookings }}</span><span class="stat-label">Total Booking</span></div>
+        </div>
+    </div>
+    <div class="col-sm-6 col-lg-3">
+        <div class="stat-card">
+            <div class="stat-icon bg-warning-subtle text-warning"><i class="bi bi-hourglass-split"></i></div>
+            <div class="stat-info"><span class="stat-value">{{ pending_count }}</span><span class="stat-label">Menunggu Approval</span></div>
+        </div>
+    </div>
+    <div class="col-sm-6 col-lg-3">
+        <div class="stat-card">
+            <div class="stat-icon bg-success-subtle text-success"><i class="bi bi-check-circle"></i></div>
+            <div class="stat-info"><span class="stat-value">{{ approved_count }}</span><span class="stat-label">Approved</span></div>
+        </div>
+    </div>
+    <div class="col-sm-6 col-lg-3">
+        <div class="stat-card">
+            <div class="stat-icon bg-danger-subtle text-danger"><i class="bi bi-x-circle"></i></div>
+            <div class="stat-info"><span class="stat-value">{{ rejected_count }}</span><span class="stat-label">Rejected</span></div>
+        </div>
+    </div>
+</div>
+
+<div class="row g-3">
+    <div class="col-lg-8">
+        <div class="card">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h5 class="mb-0">&#9203; Booking Pending — Butuh Approval</h5>
+                <a href="{{ url_for('approval.list_pending') }}" class="btn btn-primary btn-sm">Lihat Semua</a>
+            </div>
+            <div class="card-body">
+                {% if pending_bookings %}
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead><tr><th>Pengaju</th><th>Judul</th><th>Ruangan</th><th>Tanggal</th><th>Divisi</th><th></th></tr></thead>
+                        <tbody>
+                            {% for b in pending_bookings %}
+                            <tr>
+                                <td>{{ b.user.nama }}</td><td>{{ b.title }}</td><td>{{ b.room.room_name }}</td>
+                                <td>{{ b.meeting_date }}</td><td>{{ b.division }}</td>
+                                <td><a href="{{ url_for('approval.detail', booking_id=b.id) }}" class="btn btn-sm btn-outline-primary">Review</a></td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                {% else %}
+                <div class="text-center py-3 text-muted">
+                    <i class="bi bi-check-circle" style="font-size:2rem;"></i>
+                    <p class="mt-2 mb-0">Semua booking sudah diproses!</p>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-4">
+        <div class="card">
+            <div class="card-header"><h5 class="mb-0">Booking per Divisi</h5></div>
+            <div class="card-body">
+                {% if division_stats %}
+                <div class="list-group list-group-flush">
+                    {% for div, total in division_stats %}
+                    <div class="list-group-item d-flex justify-content-between align-items-center">
+                        {{ div }}<span class="badge bg-primary rounded-pill">{{ total }}</span>
+                    </div>
+                    {% endfor %}
+                </div>
+                {% else %}<div class="text-center py-3 text-muted">Belum ada data</div>{% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

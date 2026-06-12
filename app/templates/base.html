@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Meeting Room Booking{% endblock %}</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.2/font/bootstrap-icons.css" rel="stylesheet">
+    <link href="{{ url_for('static', filename='css/style.css') }}" rel="stylesheet">
+    {% block extra_css %}{% endblock %}
+</head>
+<body>
+
+{% if current_user.is_authenticated %}
+<div class="app-wrapper">
+    <aside class="app-sidebar" id="sidebar">
+        <div class="sidebar-brand">
+            <i class="bi bi-building"></i>
+            <span class="brand-text">MeetRoom</span>
+        </div>
+        <nav class="sidebar-nav">
+            <a href="{{ url_for('dashboard.index') }}" class="nav-item {{ 'active' if request.endpoint == 'dashboard.index' }}">
+                <i class="bi bi-speedometer2"></i><span>Dashboard</span>
+            </a>
+            <a href="{{ url_for('booking.my_bookings') }}" class="nav-item {{ 'active' if request.endpoint and request.endpoint.startswith('booking.') }}">
+                <i class="bi bi-calendar-check"></i><span>Booking Saya</span>
+            </a>
+            <a href="{{ url_for('booking.create') }}" class="nav-item {{ 'active' if request.endpoint == 'booking.create' }}">
+                <i class="bi bi-plus-circle"></i><span>Ajukan Booking</span>
+            </a>
+            <a href="{{ url_for('schedule.index') }}" class="nav-item {{ 'active' if request.endpoint and request.endpoint.startswith('schedule.') }}">
+                <i class="bi bi-calendar-week"></i><span>Jadwal Ruangan</span>
+            </a>
+            {% if current_user.is_admin_or_above() %}
+            <div class="nav-divider"></div>
+            <a href="{{ url_for('approval.list_pending') }}" class="nav-item {{ 'active' if request.endpoint and request.endpoint.startswith('approval.') }}">
+                <i class="bi bi-check2-all"></i><span>Approval HRD</span>
+            </a>
+            <a href="{{ url_for('room.list_rooms') }}" class="nav-item {{ 'active' if request.endpoint and request.endpoint.startswith('room.') }}">
+                <i class="bi bi-door-open"></i><span>Master Ruangan</span>
+            </a>
+            <a href="{{ url_for('report.index') }}" class="nav-item {{ 'active' if request.endpoint and request.endpoint.startswith('report.') }}">
+                <i class="bi bi-bar-chart"></i><span>Laporan</span>
+            </a>
+            {% endif %}
+            <div class="nav-divider"></div>
+            <a href="{{ url_for('auth.logout') }}" class="nav-item nav-logout">
+                <i class="bi bi-box-arrow-right"></i><span>Logout</span>
+            </a>
+        </nav>
+    </aside>
+    <main class="app-main">
+        <header class="app-topbar">
+            <button class="sidebar-toggle" id="sidebarToggle"><i class="bi bi-list"></i></button>
+            <div class="topbar-spacer"></div>
+            <div class="topbar-user">
+                <div class="user-avatar">{{ current_user.nama[:2].upper() }}</div>
+                <div class="user-info">
+                    <span class="user-name">{{ current_user.nama }}</span>
+                    <span class="user-role">
+                        <span class="badge bg-{{ 'primary' if current_user.role == 'karyawan' else 'warning' if current_user.role == 'hrd' else 'danger' if current_user.role == 'admin' else 'dark' }}">
+                            {{ current_user.role | capitalize }}
+                        </span>
+                    </span>
+                </div>
+            </div>
+        </header>
+        <div class="app-content">
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    {% for category, message in messages %}
+                        <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+                            {{ message }}
+                            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                        </div>
+                    {% endfor %}
+                {% endif %}
+            {% endwith %}
+            {% block page_title %}{% endblock %}
+            {% block content %}{% endblock %}
+        </div>
+    </main>
+</div>
+{% else %}
+<div class="auth-wrapper">
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            {% for category, message in messages %}
+                <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+                    {{ message }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
+    {% block auth_content %}{% endblock %}
+</div>
+{% endif %}
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<script src="{{ url_for('static', filename='js/main.js') }}"></script>
+{% block extra_js %}{% endblock %}
+</body>
+</html>

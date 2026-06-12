@@ -1,0 +1,72 @@
+{% extends "base.html" %}
+{% block title %}Dashboard {{ current_user.role | capitalize }} - Meeting Room Booking{% endblock %}
+
+{% block page_title %}
+<div class="page-header">
+    <h4><i class="bi bi-speedometer2"></i> Dashboard {{ current_user.role | capitalize }}</h4>
+    <span class="text-muted">Selamat datang, {{ current_user.nama }}!</span>
+</div>
+{% endblock %}
+
+{% block content %}
+<div class="row g-3 mb-4">
+    <div class="col-sm-6 col-lg-2"><div class="stat-card"><div class="stat-icon bg-primary-subtle text-primary"><i class="bi bi-calendar-check"></i></div><div class="stat-info"><span class="stat-value">{{ total_bookings }}</span><span class="stat-label">Total</span></div></div></div>
+    <div class="col-sm-6 col-lg-2"><div class="stat-card"><div class="stat-icon bg-warning-subtle text-warning"><i class="bi bi-hourglass-split"></i></div><div class="stat-info"><span class="stat-value">{{ pending_count }}</span><span class="stat-label">Pending</span></div></div></div>
+    <div class="col-sm-6 col-lg-2"><div class="stat-card"><div class="stat-icon bg-success-subtle text-success"><i class="bi bi-check-circle"></i></div><div class="stat-info"><span class="stat-value">{{ approved_count }}</span><span class="stat-label">Approved</span></div></div></div>
+    <div class="col-sm-6 col-lg-2"><div class="stat-card"><div class="stat-icon bg-danger-subtle text-danger"><i class="bi bi-x-circle"></i></div><div class="stat-info"><span class="stat-value">{{ rejected_count }}</span><span class="stat-label">Rejected</span></div></div></div>
+    <div class="col-sm-6 col-lg-2"><div class="stat-card"><div class="stat-icon bg-secondary-subtle text-secondary"><i class="bi bi-slash-circle"></i></div><div class="stat-info"><span class="stat-value">{{ cancelled_count }}</span><span class="stat-label">Cancelled</span></div></div></div>
+    <div class="col-sm-6 col-lg-2"><div class="stat-card"><div class="stat-icon bg-info-subtle text-info"><i class="bi bi-door-open"></i></div><div class="stat-info"><span class="stat-value">{{ active_rooms }}/{{ total_rooms }}</span><span class="stat-label">Ruangan Aktif</span></div></div></div>
+</div>
+
+<div class="row g-3">
+    <div class="col-lg-8">
+        <div class="card">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h5 class="mb-0">Booking Terbaru</h5>
+                <div>
+                    <a href="{{ url_for('approval.list_pending') }}" class="btn btn-outline-warning btn-sm me-1">Approval</a>
+                    <a href="{{ url_for('report.index') }}" class="btn btn-outline-primary btn-sm">Laporan</a>
+                </div>
+            </div>
+            <div class="card-body">
+                {% if recent_bookings %}
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead><tr><th>Pengaju</th><th>Judul</th><th>Ruangan</th><th>Tanggal</th><th>Status</th></tr></thead>
+                        <tbody>
+                            {% for b in recent_bookings %}
+                            <tr><td>{{ b.user.nama }}</td><td>{{ b.title }}</td><td>{{ b.room.room_name }}</td><td>{{ b.meeting_date }}</td><td><span class="badge {{ b.get_status_badge_class() }}">{{ b.status }}</span></td></tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                {% else %}<div class="text-center py-3 text-muted">Belum ada booking</div>{% endif %}
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-4">
+        <div class="card">
+            <div class="card-header"><h5 class="mb-0">Booking per Divisi</h5></div>
+            <div class="card-body">
+                {% if division_stats %}
+                <div class="list-group list-group-flush">
+                    {% for div, total in division_stats %}
+                    <div class="list-group-item d-flex justify-content-between align-items-center">{{ div }}<span class="badge bg-primary rounded-pill">{{ total }}</span></div>
+                    {% endfor %}
+                </div>
+                {% else %}<div class="text-center py-3 text-muted">Belum ada data</div>{% endif %}
+            </div>
+        </div>
+        <div class="card mt-3">
+            <div class="card-header"><h5 class="mb-0">Menu Cepat</h5></div>
+            <div class="card-body">
+                <div class="d-grid gap-2">
+                    <a href="{{ url_for('room.list_rooms') }}" class="btn btn-outline-primary"><i class="bi bi-door-open"></i> Kelola Ruangan</a>
+                    <a href="{{ url_for('report.index') }}" class="btn btn-outline-info"><i class="bi bi-bar-chart"></i> Lihat Laporan</a>
+                    <a href="{{ url_for('schedule.index') }}" class="btn btn-outline-success"><i class="bi bi-calendar-week"></i> Jadwal Ruangan</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

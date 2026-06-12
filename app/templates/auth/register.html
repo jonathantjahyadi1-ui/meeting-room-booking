@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+{% block title %}Register - Meeting Room Booking{% endblock %}
+
+{% block auth_content %}
+<div class="auth-container">
+    <div class="auth-card">
+        <div class="auth-header">
+            <i class="bi bi-building auth-logo"></i>
+            <h3>Daftar Akun Baru</h3>
+            <p class="text-muted">Isi data untuk membuat akun</p>
+        </div>
+        <form method="POST" class="auth-form">
+            <div class="mb-3">
+                <label for="nama" class="form-label">Nama Lengkap</label>
+                <input type="text" class="form-control" id="nama" name="nama" placeholder="Masukkan nama lengkap" required>
+            </div>
+            <div class="mb-3">
+                <label for="username" class="form-label">Username</label>
+                <input type="text" class="form-control" id="username" name="username" placeholder="Pilih username" required>
+            </div>
+            <div class="mb-3">
+                <label for="password" class="form-label">Password</label>
+                <input type="password" class="form-control" id="password" name="password" placeholder="Minimal 6 karakter" required minlength="6">
+            </div>
+            <div class="mb-3">
+                <label class="form-label">Role</label>
+                <input type="text" class="form-control" value="Karyawan" readonly>
+                <input type="hidden" name="role" value="karyawan">
+            </div>
+            <div class="mb-4">
+                <label for="division" class="form-label">Divisi</label>
+                <select class="form-select" id="division" name="division" required>
+                    <option value="">-- Pilih Divisi --</option>
+                    {% for value, label in divisions %}
+                        <option value="{{ value }}">{{ label }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <button type="submit" class="btn btn-primary w-100"><i class="bi bi-person-plus"></i> Register</button>
+        </form>
+        <div class="auth-footer">
+            Sudah punya akun? <a href="{{ url_for('auth.login') }}">Login di sini</a>
+        </div>
+    </div>
+</div>
+{% endblock %}

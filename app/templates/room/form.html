@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+{% block title %}{{ 'Edit' if room else 'Tambah' }} Ruangan - Meeting Room Booking{% endblock %}
+
+{% block page_title %}
+<div class="page-header">
+    <h4><i class="bi bi-door-open"></i> {{ 'Edit Ruangan' if room else 'Tambah Ruang Meeting' }}</h4>
+    <a href="{{ url_for('room.list_rooms') }}" class="btn btn-outline-secondary btn-sm"><i class="bi bi-arrow-left"></i> Kembali</a>
+</div>
+{% endblock %}
+
+{% block content %}
+<div class="card">
+    <div class="card-body">
+        <form method="POST">
+            <div class="row g-3">
+                <div class="col-md-6">
+                    <label for="room_name" class="form-label">Nama Ruangan <span class="text-danger">*</span></label>
+                    <input type="text" class="form-control" id="room_name" name="room_name" value="{{ room.room_name if room else '' }}" placeholder="Contoh: Ruang Rapat Utama" required>
+                </div>
+                <div class="col-md-6">
+                    <label for="capacity" class="form-label">Kapasitas (orang) <span class="text-danger">*</span></label>
+                    <input type="number" class="form-control" id="capacity" name="capacity" value="{{ room.capacity if room else '' }}" min="1" placeholder="10" required>
+                </div>
+                <div class="col-md-6">
+                    <label for="location" class="form-label">Lokasi / Lantai <span class="text-danger">*</span></label>
+                    <input type="text" class="form-control" id="location" name="location" value="{{ room.location if room else '' }}" placeholder="Lantai 2" required>
+                </div>
+                <div class="col-md-6">
+                    <label for="facilities" class="form-label">Fasilitas</label>
+                    <input type="text" class="form-control" id="facilities" name="facilities" value="{{ room.facilities if room else '' }}" placeholder="Proyektor, TV, Whiteboard, AC">
+                    <div class="form-text">Pisahkan dengan koma</div>
+                </div>
+            </div>
+            <div class="mt-4 d-flex gap-2">
+                <button type="submit" class="btn btn-primary"><i class="bi bi-{{ 'check-lg' if room else 'plus-lg' }}"></i> {{ 'Simpan' if room else 'Tambah' }}</button>
+                <a href="{{ url_for('room.list_rooms') }}" class="btn btn-outline-secondary">Batal</a>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

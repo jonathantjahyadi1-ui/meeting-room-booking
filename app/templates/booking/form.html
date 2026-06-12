@@ -1,0 +1,91 @@
+{% extends "base.html" %}
+{% block title %}Ajukan Booking - Meeting Room Booking{% endblock %}
+
+{% block page_title %}
+<div class="page-header">
+    <h4><i class="bi bi-plus-circle"></i> Ajukan Booking Ruang Meeting</h4>
+    <span class="text-muted">Booking minimal H-{{ min_days }} sebelum tanggal meeting</span>
+</div>
+{% endblock %}
+
+{% block content %}
+<div class="card">
+    <div class="card-body">
+        <form method="POST" id="bookingForm">
+            <div class="row g-3">
+                <div class="col-12">
+                    <label for="title" class="form-label">Judul Meeting <span class="text-danger">*</span></label>
+                    <input type="text" class="form-control" id="title" name="title" placeholder="Contoh: Weekly Sprint Planning" required>
+                </div>
+                <div class="col-md-6">
+                    <label for="division" class="form-label">Divisi <span class="text-danger">*</span></label>
+                    <select class="form-select" id="division" name="division" required>
+                        <option value="">-- Pilih Divisi --</option>
+                        {% for value, label in divisions %}<option value="{{ value }}">{{ label }}</option>{% endfor %}
+                    </select>
+                </div>
+                <div class="col-md-6">
+                    <label for="room_id" class="form-label">Ruangan <span class="text-danger">*</span></label>
+                    <select class="form-select" id="room_id" name="room_id" required onchange="updateCapacityInfo()">
+                        <option value="">-- Pilih Ruangan --</option>
+                        {% for room in rooms %}
+                        <option value="{{ room.id }}" data-capacity="{{ room.capacity }}" data-location="{{ room.location }}" data-facilities="{{ room.facilities }}">
+                            {{ room.room_name }} (Kapasitas: {{ room.capacity }} org)
+                        </option>
+                        {% endfor %}
+                    </select>
+                    <div id="roomInfo" class="form-text mt-1" style="display:none;"></div>
+                </div>
+                <div class="col-md-4">
+                    <label for="meeting_date" class="form-label">Tanggal <span class="text-danger">*</span></label>
+                    <input type="date" class="form-control" id="meeting_date" name="meeting_date" required>
+                    <div class="form-text">Minimal H-{{ min_days }} dari hari ini</div>
+                </div>
+                <div class="col-md-4">
+                    <label for="start_time" class="form-label">Jam Mulai <span class="text-danger">*</span></label>
+                    <input type="time" class="form-control" id="start_time" name="start_time" required>
+                </div>
+                <div class="col-md-4">
+                    <label for="end_time" class="form-label">Jam Selesai <span class="text-danger">*</span></label>
+                    <input type="time" class="form-control" id="end_time" name="end_time" required>
+                </div>
+                <div class="col-md-4">
+                    <label for="participant_count" class="form-label">Peserta <span class="text-danger">*</span></label>
+                    <input type="number" class="form-control" id="participant_count" name="participant_count" min="1" placeholder="Jumlah peserta" required>
+                    <div id="capacityWarning" class="form-text text-danger" style="display:none;"></div>
+                </div>
+                <div class="col-md-8">
+                    <label for="purpose" class="form-label">Keperluan <span class="text-danger">*</span></label>
+                    <input type="text" class="form-control" id="purpose" name="purpose" placeholder="Contoh: Diskusi project Q3" required>
+                </div>
+                <div class="col-12">
+                    <label for="notes" class="form-label">Catatan Tambahan</label>
+                    <textarea class="form-control" id="notes" name="notes" rows="3" placeholder="Opsional: kebutuhan khusus"></textarea>
+                </div>
+                
+            </div>
+            <div class="mt-4 d-flex gap-2">
+                <button type="submit" class="btn btn-primary"><i class="bi bi-send"></i> Ajukan Booking</button>
+                <a href="{{ url_for('booking.my_bookings') }}" class="btn btn-outline-secondary">Batal</a>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+function updateCapacityInfo(){
+    var s=document.getElementById('room_id'), o=s.options[s.selectedIndex];
+    var d=document.getElementById('roomInfo');
+    if(o.value){d.style.display='block';d.innerHTML='<strong>Lokasi:</strong> '+o.dataset.location+' | <strong>Fasilitas:</strong> '+(o.dataset.facilities||'-');document.getElementById('participant_count').max=o.dataset.capacity}
+    else{d.style.display='none'}
+}
+document.getElementById('participant_count').addEventListener('input',function(){
+    var s=document.getElementById('room_id'), o=s.options[s.selectedIndex];
+    var w=document.getElementById('capacityWarning');
+    if(o.value&&parseInt(this.value)>parseInt(o.dataset.capacity)){w.style.display='block';w.textContent='Melebihi kapasitas ('+o.dataset.capacity+' orang)'}
+    else{w.style.display='none'}
+});
+</script>
+{% endblock %}
