@@ -1,8 +1,5 @@
 """
 Inisialisasi Ekstensi Flask
------------------------------
-Semua ekstensi (SQLAlchemy, Migrate, LoginManager)
-diinisialisasi di sini agar bisa di-import oleh modul lain.
 """
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
