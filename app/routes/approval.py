@@ -22,7 +22,7 @@ def list_pending():
         query = query.filter_by(status=status_filter)
     bookings = query.order_by(RoomBooking.created_at.asc()).all()
     return render_template('approval/list.html', bookings=bookings,
-                           current_filter=status_filter, statuses=RoomBooking.VALID_STATUSES)
+                            current_filter=status_filter, statuses=RoomBooking.VALID_STATUSES)
 
 
 @approval_bp.route('/<int:booking_id>')
