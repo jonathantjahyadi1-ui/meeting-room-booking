@@ -30,7 +30,6 @@ class DevelopmentConfig(Config):
 
 
 class ProductionConfig(Config):
-    """Konfigurasi production — menggunakan PostgreSQL DigitalOcean."""
     DEBUG = False
     # DigitalOcean Managed Database menyediakan DATABASE_URL
     SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL')

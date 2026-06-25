@@ -43,7 +43,7 @@ def approve(booking_id):
         flash('Booking berhasil di-approve.', 'success')
     except BookingValidationError as e:
         flash(str(e), 'danger')
-    return redirect(url_for('approval.list_pending'))
+    return redirect(url_for('approval.list_pending')) 
 
 
 @approval_bp.route('/<int:booking_id>/reject', methods=['POST'])
