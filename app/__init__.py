@@ -29,6 +29,7 @@ def create_app(config_class=None):
     if config_class is None:
         config_class = get_config()
     app.config.from_object(config_class)
+    print("DATABASE YANG DIPAKAI:", app.config.get("SQLALCHEMY_DATABASE_URI"))
 
     # Jika production config, panggil init_app
     if hasattr(config_class, 'init_app'):
