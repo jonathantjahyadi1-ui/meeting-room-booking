@@ -1,8 +1,3 @@
-/**
- * Meeting Room Booking — Custom JavaScript
- * Modern, minimalis, helper ringan
- */
-
 document.addEventListener('DOMContentLoaded', function () {
     // --- Sidebar Toggle (Mobile) ---
     const sidebarToggle = document.getElementById('sidebarToggle');
